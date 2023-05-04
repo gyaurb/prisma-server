@@ -16,11 +16,14 @@
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-graphql": "^0.12.0",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
+    "reflect-metadata": "^0.1.13",
     "rfs": "^9.0.6",
-    "rotating-file-stream": "^3.0.4"
+    "rotating-file-stream": "^3.0.4",
+    "type-graphql": "^1.1.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

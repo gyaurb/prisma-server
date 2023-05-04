@@ -54,6 +54,7 @@ const addPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 },
             },
         });
+        console.log("create", createdPost);
         // Obtener todos los usuarios con sus posts y perfiles asociados
         const allPostsByUser = yield prisma_1.default.post.findMany({
             where: {
@@ -110,7 +111,7 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const post = yield prisma_1.default.post.delete({
             where: { id: id }
         });
-        console.log("delete post", post);
+        console.log("delete", post);
         res.status(200).send({
             resultado: 1,
             datos: post,
