@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import express from 'express'
 import dotenv from 'dotenv'
 import userRoutes from './routes/userRoutes'
@@ -5,9 +6,9 @@ import postRoutes from './routes/postRoutes'
 import authRoute from './routes/authRoute'
 import authMiddleware from './middlewares/authMiddleware'
 import { PrismaClient } from '@prisma/client'
-import { ObjectType, Field, Resolver , Query, buildSchemaSync, Arg,InputType } from 'type-graphql'
+import { ObjectType, Field, Resolver , Query, buildSchemaSync, Arg } from 'type-graphql'
 import { graphqlHTTP } from 'express-graphql'
-import "reflect-metadata"
+import { Post, User, resolvers } from "../prisma/type-graphql"
 
 dotenv.config()
 
@@ -15,25 +16,6 @@ const port = process.env.SERVER_PORT || 3000
 
 const prisma = new PrismaClient()
 
-@ObjectType()
-export class User {
-  @Field()
-  username!: string
-  @Field((type) => String, { nullable: true })
-  password?: string
-  @Field()
-  provider!: string
-  @Field()
-  status!: string
-  @Field()
-  createdAt!: Date
-}
-
-@InputType()
-export class UserWhereInput {
-  @Field({ nullable: true })
-  username?: string;
-}
 
 @Resolver(User)
 export class UserResolver {
@@ -60,22 +42,29 @@ export class UserResolver {
     console.log("users", users)
     return users
   }
+}
 
-  @Query(() => [User],  { nullable: true })
-  async userWhere(
-    @Arg("where", { nullable: true }) where?: UserWhereInput,
-    ): Promise<User[]> {
-      console.log("where", where)
-    const users = await prisma.user.findMany({
-      where: where
-    });
-    console.log("users", users)
-    return users
+@Resolver(Post)
+export class PostResolver {
+  @Query(() => Post,  { nullable: true })
+  async post (
+    @Arg("authorId", { nullable: false }) authorId?: number,
+  ){
+    const post = await prisma.post.findFirst({
+      where : {
+        authorId : authorId
+      },
+      include : {
+        author : true
+      }
+    })
+    console.log("post", post)
+    return post
   }
 }
 
 const schema = buildSchemaSync({
-    resolvers : [UserResolver]
+    resolvers : [UserResolver, PostResolver]
 })
 
 const app = express()

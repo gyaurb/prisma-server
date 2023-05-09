@@ -12,17 +12,21 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^4.13.0",
+    "@types/graphql-fields": "^1.3.5",
     "axios": "^1.2.5",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
+    "graphql-fields": "^2.0.3",
+    "graphql-scalars": "^1.21.3",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "reflect-metadata": "^0.1.13",
     "rfs": "^9.0.6",
     "rotating-file-stream": "^3.0.4",
+    "tslib": "^2.5.0",
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {
@@ -33,6 +37,7 @@
     "@types/node": "^18.11.18",
     "nodemon": "^2.0.20",
     "prisma": "^4.13.0",
+    "typegraphql-prisma": "^0.25.0",
     "typescript": "^4.9.4"
   }
 }

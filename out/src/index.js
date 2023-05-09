@@ -24,52 +24,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserResolver = exports.UserWhereInput = exports.User = void 0;
+exports.PostResolver = exports.UserResolver = void 0;
+require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const client_1 = require("@prisma/client");
 const type_graphql_1 = require("type-graphql");
 const express_graphql_1 = require("express-graphql");
-require("reflect-metadata");
+const type_graphql_2 = require("../prisma/type-graphql");
 dotenv_1.default.config();
 const port = process.env.SERVER_PORT || 3000;
 const prisma = new client_1.PrismaClient();
-let User = class User {
-};
-__decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
-], User.prototype, "username", void 0);
-__decorate([
-    (0, type_graphql_1.Field)((type) => String, { nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "password", void 0);
-__decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
-], User.prototype, "provider", void 0);
-__decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
-], User.prototype, "status", void 0);
-__decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", Date)
-], User.prototype, "createdAt", void 0);
-User = __decorate([
-    (0, type_graphql_1.ObjectType)()
-], User);
-exports.User = User;
-let UserWhereInput = class UserWhereInput {
-};
-__decorate([
-    (0, type_graphql_1.Field)({ nullable: true }),
-    __metadata("design:type", String)
-], UserWhereInput.prototype, "username", void 0);
-UserWhereInput = __decorate([
-    (0, type_graphql_1.InputType)()
-], UserWhereInput);
-exports.UserWhereInput = UserWhereInput;
 let UserResolver = class UserResolver {
     allUser() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -90,44 +55,54 @@ let UserResolver = class UserResolver {
             return users;
         });
     }
-    userWhere(where) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log("where", where);
-            const users = yield prisma.user.findMany({
-                where: where
-            });
-            console.log("users", users);
-            return users;
-        });
-    }
 };
 __decorate([
-    (0, type_graphql_1.Query)(() => [User], { nullable: true }),
+    (0, type_graphql_1.Query)(() => [type_graphql_2.User], { nullable: true }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "allUser", null);
 __decorate([
-    (0, type_graphql_1.Query)(() => [User], { nullable: true }),
+    (0, type_graphql_1.Query)(() => [type_graphql_2.User], { nullable: true }),
     __param(0, (0, type_graphql_1.Arg)("username", { nullable: false })),
     __param(1, (0, type_graphql_1.Arg)("status", { nullable: true })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "user", null);
-__decorate([
-    (0, type_graphql_1.Query)(() => [User], { nullable: true }),
-    __param(0, (0, type_graphql_1.Arg)("where", { nullable: true })),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserWhereInput]),
-    __metadata("design:returntype", Promise)
-], UserResolver.prototype, "userWhere", null);
 UserResolver = __decorate([
-    (0, type_graphql_1.Resolver)(User)
+    (0, type_graphql_1.Resolver)(type_graphql_2.User)
 ], UserResolver);
 exports.UserResolver = UserResolver;
+let PostResolver = class PostResolver {
+    post(authorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield prisma.post.findFirst({
+                where: {
+                    authorId: authorId
+                },
+                include: {
+                    author: true
+                }
+            });
+            console.log("post", post);
+            return post;
+        });
+    }
+};
+__decorate([
+    (0, type_graphql_1.Query)(() => type_graphql_2.Post, { nullable: true }),
+    __param(0, (0, type_graphql_1.Arg)("authorId", { nullable: false })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "post", null);
+PostResolver = __decorate([
+    (0, type_graphql_1.Resolver)(type_graphql_2.Post)
+], PostResolver);
+exports.PostResolver = PostResolver;
 const schema = (0, type_graphql_1.buildSchemaSync)({
-    resolvers: [UserResolver]
+    resolvers: [UserResolver, PostResolver]
 });
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
